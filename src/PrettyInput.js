@@ -2,17 +2,17 @@
 
 const PrettyModify = {
 	format(number) {
-		number = number.toString();
+		number = number.toString().replace(/ /g, "");
 
 		if (number.indexOf('.') > -1 || number.indexOf(',') > -1) {
 			number = number.split(/[\.,]/);
 			console.log(number);
 			let entire = number[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 			let decimal = number.length > 1 ? '.' + number[1] : '';
+			console.log(entire, decimal);
 			return entire + decimal;
 		}
 
-		number = number.toString().replace(/ /g, "");
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 	},
 	unformat(number, makeFloat = false) {
@@ -36,6 +36,7 @@ class PrettyInput {
 		this.__isNegative = this.__input.dataset.negative || false;
 		this.__min = this.__input.dataset.min || null;
 		this.__max = this.__input.dataset.max || null;
+		this.__oldValue = '';
 
 		this.__input.addEventListener('keydown', this.__onKeyDown.bind(this));
 		this.__input.addEventListener('keyup', this.__onKeyUp.bind(this));
@@ -122,7 +123,9 @@ class PrettyInput {
 		const formattedValue = this.formattedValue;
 		const cursorPosition = e.currentTarget.selectionStart;
 
-		if (isLeft || isRight) { // Left, Right
+		this.__oldValue = this.input.value;
+
+		if (isLeft || isRight) {
 			let cursorShift = 0;
 			e.preventDefault();
 
@@ -182,22 +185,27 @@ class PrettyInput {
 	}
 
 	__onKeyUp(e) {
-		const oldFormattedValue = this.formattedValue;
+		const oldFormattedValue = this.__oldValue;
 		const cursorPosition = e.currentTarget.selectionStart;
 		this.input.value = PrettyModify.format(this.input.value);
 		const newFormattedValue = this.formattedValue;
 
 		const isBackspace = e.keyCode == 8;
 		const isDel = e.keyCode == 46;
-		const diffFormattedLength = oldFormattedValue.length - newFormattedValue.length;
+		let cursorShift = 0;
+
+		let oldValueSpaces = this.__spacesBeforeCursor(oldFormattedValue.slice(0, cursorPosition));
+		let newValueSpaces = this.__spacesBeforeCursor(newFormattedValue.slice(0, cursorPosition));
+
+		cursorShift += newValueSpaces - oldValueSpaces;
 
 		if (isBackspace) {
-			this.input.setSelectionRange(cursorPosition + diffFormattedLength, cursorPosition + diffFormattedLength);
+			if (newFormattedValue.charAt(cursorPosition + cursorShift - 1) == ' ') {
+				cursorShift--;
+			}
 		}
 
-		if (isDel) {
-			this.input.setSelectionRange(cursorPosition, cursorPosition);
-		}
+		this.input.setSelectionRange(cursorPosition + cursorShift, cursorPosition + cursorShift);
 	}
 
 	__checkRange() {
@@ -225,5 +233,10 @@ class PrettyInput {
 		if (this.formattedValue.charAt(cursorPosition) == ' ') {
 			this.input.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
 		}
+	}
+
+	__spacesBeforeCursor(str) {
+		var result = str.split(' ').length - 1
+		return result > 0 ? result : 0;
 	}
 }

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PrettyInput demo</title>
+    <style>
+        body {
+            font-family: Ubuntu, Arial, sans-serif;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .column {
+            width: 33.33%;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        input {
+            padding: 0.5rem;
+            width: calc(100% - 2rem);
+            font-size: 24px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <div class="column">
+            <h3>Обычное поле ввода</h3>
+            <input type="text" class="js-pretty-input">
+        </div>
+        <div class="column">
+            <h3>Ввод дробных чисел</h3>
+            <input type="text" class="js-pretty-input" data-float="true">
+        </div>
+        <div class="column">
+            <h3>Ввод отрицательных чисел</h3>
+            <input type="text" class="js-pretty-input" data-negative="true">
+        </div>
+        <div class="column">
+            <h3>Ввод отрицательных дробных чисел</h3>
+            <input type="text" class="js-pretty-input" data-float="true" data-negative="true">
+        </div>
+    </div>
+    <script src="../src/PrettyInput.js"></script>
+    <script>
+        Array.from(document.getElementsByClassName('js-pretty-input')).forEach(function(input) {
+            new PrettyInput(input);
+        });
+    </script>
+</body>
+</html>

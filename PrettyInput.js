@@ -123,6 +123,14 @@ class PrettyInput {
 		}
 	}
 
+	get onChange() {
+		return this.__onChangeCallback;
+	}
+
+	set onChange(func) {
+		this.__onChangeCallback = func;
+	}
+
 	static find(input) {
 		if (PrettyInputInstances.length) {
 			PrettyInputInstances.forEach(function(prettyInput) {

@@ -78,6 +78,15 @@ class PrettyInput {
 		return this.__max;
 	}
 
+	get dataset() {
+		return {
+			float: this.isFloat,
+			negative: this.isNegative,
+			min: this.min,
+			max: this.max
+		}
+	}
+
 	set value(newValue) {
 		if (newValue.toString().length > 3) {
 			this.input.value = PrettyFormatter.format(newValue);

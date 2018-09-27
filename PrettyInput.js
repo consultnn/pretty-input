@@ -93,6 +93,8 @@ class PrettyInput {
 		} else {
 			this.input.value = newValue;
 		}
+
+		this.input.dispatchEvent(new Event('change'), { bubbles: true });
 	}
 
 	set isFloat(value) {
@@ -133,11 +135,14 @@ class PrettyInput {
 
 	static find(input) {
 		if (PrettyInputInstances.length) {
+			var result = null;
 			PrettyInputInstances.forEach(function(prettyInput) {
 				if (prettyInput.input == input) {
-					return prettyInput;
+					result = prettyInput;
+					return;
 				}
 			})
+			return result;
 		}
 
 		throw new Error('PrettyInput: make sure that the object was created');

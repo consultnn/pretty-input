@@ -40,6 +40,10 @@ class PrettyInput {
 		this.__onChangeCallback = options.onChange || null;
 		this.__oldValue = '';
 
+		if (this.__input.value) {
+			this.__input.value = PrettyFormatter.format(this.__input.value);
+		}
+
 		this.__input.addEventListener('keydown', this.__onKeyDown.bind(this));
 		this.__input.addEventListener('keyup', this.__onKeyUp.bind(this));
 		this.__input.addEventListener('change', this.__onChange.bind(this));

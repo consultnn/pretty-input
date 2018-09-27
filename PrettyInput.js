@@ -9,12 +9,13 @@ const PrettyFormatter = {
 			let entire = number[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 			let decimal = number.length > 1 ? '.' + number[1] : '';
 			return entire + decimal;
+		} else {
+			number = parseInt(number);
 		}
-
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 	},
 	unformat(number, makeFloat = false) {
-		let value = number.replace(' ', '');
+		let value = number.replace(/\s/g, '');
 		return makeFloat ? parseFloat(value) : parseInt(value);
 	}
 };
@@ -71,11 +72,11 @@ class PrettyInput {
 	}
 
 	get min() {
-		return this.__min;
+		return parseFloat(this.__min);
 	}
 
 	get max() {
-		return this.__max;
+		return parseFloat(this.__max);
 	}
 
 	get dataset() {
@@ -89,9 +90,9 @@ class PrettyInput {
 
 	set value(newValue) {
 		if (newValue.toString().length > 3) {
-			this.input.value = PrettyFormatter.format(newValue);
+			this.input.value = PrettyFormatter.format(newValue, this.isFloat);
 		} else {
-			this.input.value = newValue;
+			this.input.value = parseInt(newValue);
 		}
 
 		this.input.dispatchEvent(new Event('change'), { bubbles: true });
@@ -109,7 +110,7 @@ class PrettyInput {
 
 	set min(value) {
 		if (this.max && this.min < this.max) {
-			this.__min = value;
+			this.__min = parseFloat(value);
 			this.__checkRange();
 		} else if (this.max && this.min >= this.max) {
 			throw new Error('PrettyInput: min must be less than max');
@@ -117,10 +118,10 @@ class PrettyInput {
 	}
 
 	set max(value) {
-		if (this.min && this.max > this.min) {
-			this.__min = value;
+		if (this.max && this.max > this.min) {
+			this.__max = parseFloat(value);
 			this.__checkRange();
-		} else if (this.min && this.max <= this.min) {
+		} else if (this.max && this.max <= this.min) {
 			throw new Error('PrettyInput: max must be more than min');
 		}
 	}
@@ -141,7 +142,7 @@ class PrettyInput {
 					result = prettyInput;
 					return;
 				}
-			})
+			});
 			return result;
 		}
 
@@ -223,7 +224,7 @@ class PrettyInput {
 	__onKeyUp(e) {
 		const oldFormattedValue = this.__oldValue;
 		const cursorPosition = e.currentTarget.selectionStart;
-		this.input.value = PrettyFormatter.format(this.input.value);
+		this.input.value = PrettyFormatter.format(this.input.value, this.isFloat);
 		const newFormattedValue = this.formattedValue;
 
 		const isBackspace = e.keyCode == 8;
@@ -275,7 +276,7 @@ class PrettyInput {
 	}
 
 	static __spacesBeforeCursor(str) {
-		var result = str.split(' ').length - 1
+		var result = str.split(' ').length - 1;
 		return result > 0 ? result : 0;
 	}
 }

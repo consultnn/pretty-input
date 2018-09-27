@@ -46,11 +46,13 @@
             <input type="text" class="js-pretty-input" data-float="true" data-negative="true">
         </div>
     </div>
-    <script src="../src/PrettyInput.js"></script>
+    <script src="../PrettyInput.js"></script>
     <script>
         Array.from(document.getElementsByClassName('js-pretty-input')).forEach(function(input) {
             new PrettyInput(input);
         });
+
+        console.log(PrettyInput.find(document.getElementsByTagName('input')[2]));
     </script>
 </body>
 </html>

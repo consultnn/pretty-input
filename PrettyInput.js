@@ -1,15 +1,13 @@
 'use strict';
 
-const PrettyModify = {
+const PrettyFormatter = {
 	format(number) {
 		number = number.toString().replace(/ /g, "");
 
 		if (number.indexOf('.') > -1 || number.indexOf(',') > -1) {
 			number = number.split(/[\.,]/);
-			console.log(number);
 			let entire = number[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 			let decimal = number.length > 1 ? '.' + number[1] : '';
-			console.log(entire, decimal);
 			return entire + decimal;
 		}
 
@@ -21,8 +19,10 @@ const PrettyModify = {
 	}
 };
 
+let PrettyInputInstances = [];
+
 class PrettyInput {
-	constructor(element) {
+	constructor(element, options = {}) {
 		if (element == null) {
 			throw new Error('PrettyNumbers: empty element');
 		}
@@ -32,10 +32,11 @@ class PrettyInput {
 		}
 
 		this.__input = element;
-		this.__isFloat = this.__input.dataset.float || false;
-		this.__isNegative = this.__input.dataset.negative || false;
-		this.__min = this.__input.dataset.min || null;
-		this.__max = this.__input.dataset.max || null;
+		this.__isFloat = options.float || this.__input.dataset.float || false;
+		this.__isNegative = options.negative || this.__input.dataset.negative || false;
+		this.__min = options.min || this.__input.dataset.min || null;
+		this.__max = options.max || this.__input.dataset.max || null;
+		this.__onChangeCallback = options.onChange || null;
 		this.__oldValue = '';
 
 		this.__input.addEventListener('keydown', this.__onKeyDown.bind(this));
@@ -43,6 +44,7 @@ class PrettyInput {
 		this.__input.addEventListener('change', this.__onChange.bind(this));
 		this.__input.addEventListener('focus', this.__onFocus.bind(this));
 		this.__input.addEventListener('click', this.__onClick.bind(this));
+		PrettyInputInstances.push(this);
 	}
 
 	get input() {
@@ -51,7 +53,7 @@ class PrettyInput {
 
 	get value() {
 		if (this.__input.value.toString().length > 3) {
-			return PrettyModify.unformat(this.input.value, this.isFloat);
+			return PrettyFormatter.unformat(this.input.value, this.isFloat);
 		}
 		return this.input.value;
 	}
@@ -78,7 +80,7 @@ class PrettyInput {
 
 	set value(newValue) {
 		if (newValue.toString().length > 3) {
-			this.input.value = PrettyModify.format(newValue);
+			this.input.value = PrettyFormatter.format(newValue);
 		} else {
 			this.input.value = newValue;
 		}
@@ -110,6 +112,18 @@ class PrettyInput {
 		} else if (this.min && this.max <= this.min) {
 			throw new Error('PrettyInput: max must be more than min');
 		}
+	}
+
+	static find(input) {
+		if (PrettyInputInstances.length) {
+			PrettyInputInstances.forEach(function(prettyInput) {
+				if (prettyInput.input == input) {
+					return prettyInput;
+				}
+			})
+		}
+
+		throw new Error('PrettyInput: make sure that the object was created');
 	}
 
 	__onKeyDown(e) {
@@ -187,15 +201,14 @@ class PrettyInput {
 	__onKeyUp(e) {
 		const oldFormattedValue = this.__oldValue;
 		const cursorPosition = e.currentTarget.selectionStart;
-		this.input.value = PrettyModify.format(this.input.value);
+		this.input.value = PrettyFormatter.format(this.input.value);
 		const newFormattedValue = this.formattedValue;
 
 		const isBackspace = e.keyCode == 8;
-		const isDel = e.keyCode == 46;
 		let cursorShift = 0;
 
-		let oldValueSpaces = this.__spacesBeforeCursor(oldFormattedValue.slice(0, cursorPosition));
-		let newValueSpaces = this.__spacesBeforeCursor(newFormattedValue.slice(0, cursorPosition));
+		let oldValueSpaces = PrettyInput.__spacesBeforeCursor(oldFormattedValue.slice(0, cursorPosition));
+		let newValueSpaces = PrettyInput.__spacesBeforeCursor(newFormattedValue.slice(0, cursorPosition));
 
 		cursorShift += newValueSpaces - oldValueSpaces;
 
@@ -221,6 +234,10 @@ class PrettyInput {
 
 	__onChange() {
 		this.__checkRange();
+
+		if (this.__onChangeCallback) {
+			this.__onChangeCallback(this);
+		}
 	}
 
 	__onFocus() {
@@ -235,8 +252,10 @@ class PrettyInput {
 		}
 	}
 
-	__spacesBeforeCursor(str) {
+	static __spacesBeforeCursor(str) {
 		var result = str.split(' ').length - 1
 		return result > 0 ? result : 0;
 	}
 }
+
+PrettyInput.__copies = [];

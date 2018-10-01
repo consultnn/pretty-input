@@ -92,6 +92,10 @@ class PrettyInput {
 		}
 	}
 
+	get isPrettyInput() {
+		return true;
+	}
+
 	set value(newValue) {
 		if (newValue.toString().length > 3) {
 			this.input.value = PrettyFormatter.format(newValue, this.isFloat);
@@ -99,7 +103,7 @@ class PrettyInput {
 			this.input.value = parseInt(newValue);
 		}
 
-		this.input.dispatchEvent(new Event('change'), { bubbles: true });
+		this.input.dispatchEvent(new Event('change', { bubbles: true }));
 	}
 
 	set isFloat(value) {
@@ -136,6 +140,14 @@ class PrettyInput {
 
 	set onChange(func) {
 		this.__onChangeCallback = func;
+	}
+
+	setValueWithoutEvents(newValue) {
+		if (newValue.toString().length > 3) {
+			this.input.value = PrettyFormatter.format(newValue, this.isFloat);
+		} else {
+			this.input.value = parseInt(newValue);
+		}
 	}
 
 	static find(input) {
@@ -284,5 +296,3 @@ class PrettyInput {
 		return result > 0 ? result : 0;
 	}
 }
-
-PrettyInput.__copies = [];

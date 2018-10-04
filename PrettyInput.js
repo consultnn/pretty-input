@@ -40,7 +40,9 @@ class PrettyInput {
 		this.__onChangeCallback = options.onChange || null;
 		this.__oldValue = '';
 
-		if (this.__input.value) {
+		if (this.__input.value == '' && this.__min) {
+			this.__input.value = PrettyFormatter.format(this.__min);
+		} else if (this.__input.value) {
 			this.__input.value = PrettyFormatter.format(this.__input.value);
 		}
 
@@ -240,7 +242,8 @@ class PrettyInput {
 	__onKeyUp(e) {
 		const oldFormattedValue = this.__oldValue;
 		const cursorPosition = e.currentTarget.selectionStart;
-		this.input.value = PrettyFormatter.format(this.input.value, this.isFloat);
+		var prettyFormattedValue = PrettyFormatter.format(this.input.value, this.isFloat);
+		this.input.value = prettyFormattedValue != 'NaN' ? prettyFormattedValue : '';
 		const newFormattedValue = this.formattedValue;
 
 		const isBackspace = e.keyCode == 8;
@@ -262,11 +265,11 @@ class PrettyInput {
 
 	__checkRange() {
 		let value = this.value;
-		if (this.min && value < this.min) {
+		if (this.min != null && (value == '' || value < this.min)) {
 			this.value = this.min;
 		}
 
-		if (this.max && value > this.max) {
+		if (this.max != null && value > this.max) {
 			this.value = this.max;
 		}
 	}

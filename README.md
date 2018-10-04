@@ -38,6 +38,7 @@ new PrettyInput(element:Node, options:Object = {});
 ## Методы
 
 - static **find(input:node)** - возвращает экземпляр класса PrettyInput, который был создан для этого Node
+- __(1.1.0)__ **setValueWithoutEvents(value: int)** - задает новое значение для поля, при этом не срабатывает событие change для <input>
 
 ## Свойства
 
@@ -48,5 +49,6 @@ new PrettyInput(element:Node, options:Object = {});
 - **isNegative**: bool - возможность вводить отрицательные числа
 - **min**: int - минимальное значение поля
 - **max**: int - максимальное значение поля
-- **dataset**:Object - возвращает значения в виде объекта. *Только для чтения*
+- **dataset**: Object - возвращает значения в виде объекта. *Только для чтения*
 - **onChange**: Function - возвращает функцию, которая выполняется при срабатывании события change
+- __(1.1.0)__ **isPrettyInput**: bool - возвращается true, если объект является экземпляром PrettyInput. *Только для чтения*

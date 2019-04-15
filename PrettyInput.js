@@ -119,7 +119,7 @@ class PrettyInput {
 	}
 
 	set min(value) {
-		if (this.max && this.min < this.max) {
+		if (this.max && value < this.max) {
 			this.__min = parseFloat(value);
 			this.__checkRange();
 		} else if (this.max && this.min >= this.max) {
@@ -128,7 +128,7 @@ class PrettyInput {
 	}
 
 	set max(value) {
-		if (this.max && this.max > this.min) {
+		if (this.max && value > this.min) {
 			this.__max = parseFloat(value);
 			this.__checkRange();
 		} else if (this.max && this.max <= this.min) {

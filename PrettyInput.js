@@ -1,15 +1,28 @@
 'use strict';
 
 const PrettyFormatter = {
-	format(number) {
-		number = number.toString().replace(/ /g, "");
+	format(number, entireLimit = 0, decimalLimit = 0) {
+		number = number.toString().replace(/\s+/g, "");
 
 		if (number.indexOf('.') > -1 || number.indexOf(',') > -1) {
 			number = number.split(/[\.,]/);
+
+			if (entireLimit > 0) {
+				number[0] = number[0].substring(number[0].length - entireLimit - 1);
+			}
+
+			if (decimalLimit > 0) {
+				number[1] = number[1].substring(0, decimalLimit);
+			}
+
 			let entire = number[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 			let decimal = number.length > 1 ? '.' + number[1] : '';
+
 			return entire + decimal;
 		} else {
+			if (entireLimit > 0) {
+				number = number.substring(0, entireLimit);
+			}
 			number = parseInt(number);
 		}
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -37,13 +50,15 @@ class PrettyInput {
 		this.__isNegative = options.negative || this.__input.dataset.negative || false;
 		this.__min = options.min || this.__input.dataset.min || null;
 		this.__max = options.max || this.__input.dataset.max || null;
+		this.__entireLimit = options.entireLimit || this.__input.dataset.entireLimit || 0;
+		this.__decimalLimit = options.decimalLimit || this.__input.dataset.decimalLimit || 0;
 		this.__onChangeCallback = options.onChange || null;
 		this.__oldValue = '';
 
 		if (this.__input.value == '' && this.__min) {
-			this.__input.value = PrettyFormatter.format(this.__min);
+			this.__input.value = PrettyFormatter.format(this.__min, this.__entireLimit, this.__decimalLimit);
 		} else if (this.__input.value) {
-			this.__input.value = PrettyFormatter.format(this.__input.value);
+			this.__input.value = PrettyFormatter.format(this.__input.value, this.__entireLimit, this.__decimalLimit);
 		}
 
 		this.__input.addEventListener('keydown', this.__onKeyDown.bind(this));
@@ -100,7 +115,7 @@ class PrettyInput {
 
 	set value(newValue) {
 		if (newValue.toString().length > 3) {
-			this.input.value = PrettyFormatter.format(newValue, this.isFloat);
+			this.input.value = PrettyFormatter.format(newValue, this.__entireLimit, this.__decimalLimit);
 		} else {
 			this.input.value = parseInt(newValue);
 		}
@@ -146,7 +161,7 @@ class PrettyInput {
 
 	setValueWithoutEvents(newValue) {
 		if (newValue.toString().length > 3) {
-			this.input.value = PrettyFormatter.format(newValue, this.isFloat);
+			this.input.value = PrettyFormatter.format(newValue, this.__entireLimit, this.__decimalLimit);
 		} else {
 			this.input.value = parseInt(newValue);
 		}
@@ -242,7 +257,7 @@ class PrettyInput {
 	__onKeyUp(e) {
 		const oldFormattedValue = this.__oldValue;
 		const cursorPosition = e.currentTarget.selectionStart;
-		var prettyFormattedValue = PrettyFormatter.format(this.input.value, this.isFloat);
+		var prettyFormattedValue = PrettyFormatter.format(this.input.value, this.__entireLimit, this.__decimalLimit);
 		this.input.value = prettyFormattedValue != 'NaN' ? prettyFormattedValue : '';
 		const newFormattedValue = this.formattedValue;
 

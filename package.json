@@ -1,0 +1,19 @@
+{
+  "name": "pretty-input",
+  "version": "1.2.1",
+  "description": "## Описание ![Пример](/example.png)",
+  "main": "PrettyInput.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/consultnn/pretty-input.git"
+  },
+  "author": "apcom52 <apcom@live.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/consultnn/pretty-input/issues"
+  },
+  "homepage": "https://github.com/consultnn/pretty-input#readme"
+}

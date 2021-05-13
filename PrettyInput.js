@@ -55,9 +55,7 @@ class PrettyInput {
 		this.__onChangeCallback = options.onChange || null;
 		this.__oldValue = '';
 
-		if (this.__input.value == '' && this.__min) {
-			this.__input.value = PrettyFormatter.format(this.__min, this.__entireLimit, this.__decimalLimit);
-		} else if (this.__input.value) {
+		if (this.__input.value) {
 			this.__input.value = PrettyFormatter.format(this.__input.value, this.__entireLimit, this.__decimalLimit);
 		}
 
@@ -134,6 +132,7 @@ class PrettyInput {
 	}
 
 	set min(value) {
+		debugger;
 		if (this.max && value < this.max) {
 			this.__min = parseFloat(value);
 			this.__checkRange();
@@ -280,8 +279,8 @@ class PrettyInput {
 
 	__checkRange() {
 		let value = this.value;
-		if (this.min != null && (value == '' || value < this.min)) {
-			this.value = this.min;
+		if (this.min && (!value || value < this.min)) {
+			this.value = this.min || '';
 		}
 
 		if (this.max != null && value > this.max) {

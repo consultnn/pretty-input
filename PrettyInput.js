@@ -211,10 +211,10 @@ class PrettyInput {
 				}
 			}
 
-			// if (cursorShift != 0) {
-			// 	this.input.setSelectionRange(cursorPosition + cursorShift, cursorPosition + cursorShift);
-			// 	return;
-			// }
+			if (cursorShift != 0) {
+				this.input.setSelectionRange(cursorPosition + cursorShift, cursorPosition + cursorShift);
+				return;
+			}
 		}
 
 		if (isBackspace && formattedValue.charAt(cursorPosition - 1) == ' ') {
@@ -275,7 +275,7 @@ class PrettyInput {
 			}
 		}
 
-		// this.input.setSelectionRange(cursorPosition + cursorShift, cursorPosition + cursorShift);
+		this.input.setSelectionRange(cursorPosition + cursorShift, cursorPosition + cursorShift);
 	}
 
 	__checkRange() {
@@ -298,7 +298,7 @@ class PrettyInput {
 	}
 
 	__onFocus() {
-		// this.input.setSelectionRange(-1, -1);
+		this.input.setSelectionRange(-1, -1);
 	}
 
 	__onClick() {

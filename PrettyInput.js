@@ -168,18 +168,7 @@ class PrettyInput {
 	}
 
 	static find(input) {
-		if (PrettyInputInstances.length) {
-			var result = null;
-			PrettyInputInstances.forEach(function(prettyInput) {
-				if (prettyInput.input == input) {
-					result = prettyInput;
-					return;
-				}
-			});
-			return result;
-		}
-
-		throw new Error('PrettyInput: make sure that the object was created');
+		return PrettyInputInstances.find(pretty => pretty.input === input) || new PrettyInput(input);
 	}
 
 	__onKeyDown(e) {

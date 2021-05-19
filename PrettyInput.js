@@ -112,7 +112,9 @@ class PrettyInput {
 	}
 
 	set value(newValue) {
-		if (newValue.toString().length > 3) {
+		if(newValue === '' || newValue === null) {
+			this.input.value = '';
+		} else if (newValue.toString().length > 3) {
 			this.input.value = PrettyFormatter.format(newValue, this.__entireLimit, this.__decimalLimit);
 		} else {
 			this.input.value = parseInt(newValue);
@@ -132,7 +134,6 @@ class PrettyInput {
 	}
 
 	set min(value) {
-		debugger;
 		if (this.max && value < this.max) {
 			this.__min = parseFloat(value);
 			this.__checkRange();
@@ -210,10 +211,10 @@ class PrettyInput {
 				}
 			}
 
-			if (cursorShift != 0) {
-				this.input.setSelectionRange(cursorPosition + cursorShift, cursorPosition + cursorShift);
-				return;
-			}
+			// if (cursorShift != 0) {
+			// 	this.input.setSelectionRange(cursorPosition + cursorShift, cursorPosition + cursorShift);
+			// 	return;
+			// }
 		}
 
 		if (isBackspace && formattedValue.charAt(cursorPosition - 1) == ' ') {
@@ -274,7 +275,7 @@ class PrettyInput {
 			}
 		}
 
-		this.input.setSelectionRange(cursorPosition + cursorShift, cursorPosition + cursorShift);
+		// this.input.setSelectionRange(cursorPosition + cursorShift, cursorPosition + cursorShift);
 	}
 
 	__checkRange() {
@@ -297,7 +298,7 @@ class PrettyInput {
 	}
 
 	__onFocus() {
-		this.input.setSelectionRange(-1, -1);
+		// this.input.setSelectionRange(-1, -1);
 	}
 
 	__onClick() {

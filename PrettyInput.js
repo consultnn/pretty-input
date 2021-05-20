@@ -167,8 +167,12 @@ class PrettyInput {
 		}
 	}
 
+	static create(input) {
+	    return PrettyInput.find(input) || new PrettyInput(input)
+    }
+
 	static find(input) {
-		return PrettyInputInstances.find(pretty => pretty.input === input) || new PrettyInput(input);
+		return PrettyInputInstances.find(pretty => pretty.input === input) || null;
 	}
 
 	__onKeyDown(e) {

@@ -35,7 +35,7 @@ const PrettyFormatter = {
 
 let PrettyInputInstances = [];
 
-class PrettyInput {
+export default class PrettyInput {
 	constructor(element, options = {}) {
 		if (element == null) {
 			throw new Error('PrettyNumbers: empty element');
